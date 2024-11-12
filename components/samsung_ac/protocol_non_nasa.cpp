@@ -419,6 +419,21 @@ namespace esphome
             }
         }
 
+        NonNasaSwingMode swingmode_to_nonnasa_swingmode(SwingMode value)
+        {
+            switch (value)
+            {
+            case FanMode::High:
+                return NonNasaFanspeed::High;
+            case FanMode::Mid:
+                return NonNasaFanspeed::Medium;
+            case FanMode::Low:
+                return NonNasaFanspeed::Low;
+            case FanMode::Auto:
+            default:
+                return NonNasaFanspeed::Auto;
+            }
+        }
         void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
         {
             auto req = NonNasaRequest::create(address);
@@ -444,9 +459,7 @@ namespace esphome
             }
 
             if (request.swing_mode)
-            {
-                ESP_LOGW(TAG, "change swingmode is currently not implemented");
-            }
+                req.swing_mode = request.swing_mode;
 
             // Add to the queue with the current time
             NonNasaRequestQueueItem reqItem = NonNasaRequestQueueItem();
