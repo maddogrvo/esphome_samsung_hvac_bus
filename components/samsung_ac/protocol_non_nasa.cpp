@@ -423,15 +423,10 @@ namespace esphome
         {
             switch (value)
             {
-            case FanMode::High:
-                return NonNasaFanspeed::High;
-            case FanMode::Mid:
-                return NonNasaFanspeed::Medium;
-            case FanMode::Low:
-                return NonNasaFanspeed::Low;
-            case FanMode::Auto:
+            case SwingMode::Vertical:
+                return NonNasaSwingMode::Vertical;
             default:
-                return NonNasaFanspeed::Auto;
+                return NonNasaFanspeed::Off;
             }
         }
         void NonNasaProtocol::publish_request(MessageTarget *target, const std::string &address, ProtocolRequest &request)
