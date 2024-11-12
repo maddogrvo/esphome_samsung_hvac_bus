@@ -338,14 +338,14 @@ namespace esphome
                 0xD0,                     // 01 src
                 (uint8_t)hex_to_int(dst), // 02 dst
                 0xB0,                     // 03 cmd
-                0x1F,                     // 04 ?
-                0x04,                     // 05 ?
-                0,                        // 06 temp + fanmode
-                0,                        // 07 operation mode
-                0,                        // 08 power + individual mode
-                0,                        // 09
-                0,                        // 10
-                0,                        // 11
+                0x1F,                     // 04 = Data byte 01 Swing mode, 0x1a => Swing, 0x1f => no swing
+                0x04,                     // 05 = Data byte 02 ?
+                0,                        // 06 = Data byte 03 temp + fanmode
+                0,                        // 07 = Data byte 04 operation mode + reset clean filter
+                0,                        // 08 = Data byte 05 power + individual mode
+                0,                        // 09 = Data byte 06
+                0,                        // 10 = Data byte 07 Blade position (0 Closed, 1 smallest, 2-6 mid positions, 7 open max)
+                0,                        // Data byte 08
                 0,                        // 12 crc
                 0x34                      // 13 end
             };
@@ -361,6 +361,7 @@ namespace esphome
             data[8] = !power ? (uint8_t)0xC0 : (uint8_t)0xF0;
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
+            data[10] = 0x0F;
             data[12] = build_checksum(data);
 
             data[9] = (uint8_t)0x21;
