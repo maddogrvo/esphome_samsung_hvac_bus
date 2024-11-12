@@ -331,6 +331,19 @@ namespace esphome
             }
         }
 
+        uint8_t encode_request_swingmode(NonNasaSwingMode value)
+        {
+            switch (value)
+            {
+            case NonNasaSwingMode::OFF:
+                return 0x1F;
+            case NonNasaSwingMode::Vertical:
+                return 0x1A;
+            default:
+                return 0x1F; // Off
+            }
+        }
+
         std::vector<uint8_t> NonNasaRequest::encode()
         {
             std::vector<uint8_t> data{
@@ -353,7 +366,8 @@ namespace esphome
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
-
+            
+            data[4] = encode_request_swingmode(swing_mode)
             if (room_temp > 0)
                 data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
@@ -361,7 +375,7 @@ namespace esphome
             data[8] = !power ? (uint8_t)0xC0 : (uint8_t)0xF0;
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
-            data[10] = 0x0F;
+            data[10] = 0x0E;         // Open blade just short of max open
             data[12] = build_checksum(data);
 
             data[9] = (uint8_t)0x21;
@@ -454,7 +468,7 @@ namespace esphome
             }
 
             if (request.swing_mode)
-                req.swing_mode = request.swing_mode;
+                req.swing_mode = swingmode_to_nonnasa_swingmode(request.swing_mode.value());
 
             // Add to the queue with the current time
             NonNasaRequestQueueItem reqItem = NonNasaRequestQueueItem();
