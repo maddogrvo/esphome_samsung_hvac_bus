@@ -431,7 +431,7 @@ namespace esphome
 
             if (request.alt_mode)
             {
-                ESP_LOGW(TAG, "change altmode is currently not implemented");
+		req.swing_mode = swingmode_to_nonnasa_swingmode(request.swing_mode.value());
             }
 
             if (request.swing_mode)
