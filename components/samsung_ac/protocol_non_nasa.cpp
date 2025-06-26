@@ -314,7 +314,7 @@ namespace esphome
         {
             switch (value)
             {
-              	case NonNasaSwingMode::OFF:
+              	case NonNasaSwingMode::Off:
                 	return 0x1F;
             	case NonNasaSwingMode::Vertical:
                 	return 0x1A;
