@@ -617,13 +617,8 @@ namespace esphome
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC0)
             {
-                // Add checks to ensure pending messages are not overwritten
-                if (!pending_control_message(nonpacket_.src))
-                {
-                    // Publish outdoor temperature if there are no pending control messages
-                    target->set_outdoor_temperature(nonpacket_.src, nonpacket_.commandC0.outdoor_unit_outdoor_temp_c);
-                }
-                break;
+                // Publish outdoor temperature if there are no pending control messages
+                target->set_outdoor_temperature(nonpacket_.src, nonpacket_.commandC0.outdoor_unit_outdoor_temp_c);
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdF3)
             {
