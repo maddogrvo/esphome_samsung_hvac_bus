@@ -346,7 +346,7 @@ namespace esphome
             // seems to be like a building management system.
             bool individual = false;
 	    
-	    data[4] = encode_request_swingmode(swing_mode);
+	    data[4] = 0x1F;
             if (room_temp > 0)
                 data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
@@ -431,7 +431,7 @@ namespace esphome
 
             if (request.alt_mode)
             {
-		req.swing_mode = swingmode_to_nonnasa_swingmode(request.swing_mode.value());
+		ESP_LOGW(TAG, "change altmode is currently not implemented");
             }
 
             if (request.swing_mode)
@@ -499,17 +499,6 @@ namespace esphome
             default:
             case NonNasaFanspeed::Auto:
                 return FanMode::Auto;
-            }
-        }
-
-        NonNasaSwingMode swingmode_to_nonnasa_swingmode(SwingMode value)
-        {
-            switch (value)
-            {
-            	case SwingMode::Vertical:
-                	return NonNasaSwingMode::Vertical;
-            	default:
-                	return NonNasaFanspeed::Off;
             }
         }
 
