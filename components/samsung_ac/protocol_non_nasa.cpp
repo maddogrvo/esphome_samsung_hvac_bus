@@ -330,14 +330,14 @@ namespace esphome
                 0xD0,                     // 01 src
                 (uint8_t)hex_to_int(dst), // 02 dst
                 0xB0,                     // 03 cmd
-                0x1F,                     // 04 ?
-                0x04,                     // 05 ?
-                0,                        // 06 temp + fanmode
-                0,                        // 07 operation mode
-                0,                        // 08 power + individual mode
-                0,                        // 09
-                0,                        // 10
-                0,                        // 11
+                0x1F,                     // 04 = Data byte 01 Swing mode, 0x1a => Swing, 0x1f => no swing
+                0x04,                     // 05 = Data byte 02 ?
+                0,                        // 06 = Data byte 03 temp + fanmode
+                0,                        // 07 = Data byte 04 operation mode + reset clean filter
+                0,                        // 08 = Data byte 05 power + individual mode
+                0,                        // 09 = Data byte 06
+                0,                        // 10 = Data byte 07 Blade position (0 Closed, 1 smallest, 2-6 mid positions, 7 open max)
+                0,                        // Data byte 08
                 0,                        // 12 crc
                 0x34                      // 13 end
             };
@@ -346,7 +346,7 @@ namespace esphome
             // seems to be like a building management system.
             bool individual = false;
 	    
-	    data[4] = encode_request_swingmode(swing_mode)
+	    data[4] = encode_request_swingmode(swing_mode);
             if (room_temp > 0)
                 data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
@@ -499,6 +499,17 @@ namespace esphome
             default:
             case NonNasaFanspeed::Auto:
                 return FanMode::Auto;
+            }
+        }
+
+        NonNasaSwingMode swingmode_to_nonnasa_swingmode(SwingMode value)
+        {
+            switch (value)
+            {
+            	case SwingMode::Vertical:
+                	return NonNasaSwingMode::Vertical;
+            	default:
+                	return NonNasaSwingMode::Off;
             }
         }
 
