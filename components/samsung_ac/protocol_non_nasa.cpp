@@ -615,7 +615,7 @@ namespace esphome
                    target->set_swing_vertical(nonpacket_.src, false);
                 }
             }
-            else if (nonpacket_.cmd == NonNasaCommand::CmdC0:
+            else if (nonpacket_.cmd == NonNasaCommand::CmdC0)
             {
                 // Add checks to ensure pending messages are not overwritten
                 if (!has_pending_control_message(nonpacket_.src))
