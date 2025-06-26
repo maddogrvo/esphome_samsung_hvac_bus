@@ -29,6 +29,12 @@ namespace esphome
             Auto = 0x22
         };
 
+        enum class NonNasaSwingMode : uint8_t
+        {
+            Off = 0x1F,
+            Vertical = 0x1A
+        };
+
         enum class NonNasaWindDirection : uint8_t
         {
             Vertical = 26,
