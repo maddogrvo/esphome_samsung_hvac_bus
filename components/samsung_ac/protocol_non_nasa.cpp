@@ -509,7 +509,7 @@ namespace esphome
             	case SwingMode::Vertical:
                 	return NonNasaSwingMode::Vertical;
             	default:
-                	return NonNasaSwingMode::Off;
+                	return NonNasaFanspeed::Off;
             }
         }
 
