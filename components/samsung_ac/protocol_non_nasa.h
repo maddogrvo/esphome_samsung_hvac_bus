@@ -186,6 +186,7 @@ namespace esphome
 
             uint8_t room_temp = 0;
             uint8_t target_temp = 0;
+            NonNasaSwingMode swing_mode = NonNasaSwingMode::Off;
             NonNasaFanspeed fanspeed = NonNasaFanspeed::Auto;
             NonNasaMode mode = NonNasaMode::Heat;
             bool power = false;
