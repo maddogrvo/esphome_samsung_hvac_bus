@@ -618,7 +618,7 @@ namespace esphome
             else if (nonpacket_.cmd == NonNasaCommand::CmdC0)
             {
                 // Add checks to ensure pending messages are not overwritten
-                if (!has_pending_control_message(nonpacket_.src))
+                if (!pending_control_message(nonpacket_.src))
                 {
                     // Publish outdoor temperature if there are no pending control messages
                     target->set_outdoor_temperature(nonpacket_.src, nonpacket_.commandC0.outdoor_unit_outdoor_temp_c);
@@ -628,7 +628,7 @@ namespace esphome
             else if (nonpacket_.cmd == NonNasaCommand::CmdF3)
             {
                 // Add checks to ensure pending messages are not overwritten
-                //if (!has_pending_control_message(nonpacket_.src))
+                //if (!pending_control_message(nonpacket_.src))
                 //{
                     // Publish power energy if there are no pending control messages
                     target->set_outdoor_instantaneous_power(nonpacket_.src, nonpacket_.commandF3.inverter_power_w);
