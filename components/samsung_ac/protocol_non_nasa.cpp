@@ -599,7 +599,7 @@ namespace esphome
                    // TODO
                    target->set_swing_horizontal(nonpacket_.src, false);
                    target->set_swing_vertical(nonpacket_.src, false);
-		   target->set_outdoor_cumulative_energy(nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
+		   target->set_outdoor_cumulative_energy(nonpacket_.src, nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
                 }
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
