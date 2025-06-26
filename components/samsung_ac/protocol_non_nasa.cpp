@@ -592,13 +592,14 @@ namespace esphome
                    target->set_water_heater_power(nonpacket_.src, false);
                    target->set_mode(nonpacket_.src, nonnasa_mode_to_mode(nonpacket_.command20.mode));
                    // TODO
-				   target->set_water_heater_mode(nonpacket_.src, nonnasa_water_heater_mode_to_mode(-0));
+		   target->set_water_heater_mode(nonpacket_.src, nonnasa_water_heater_mode_to_mode(-0));
                    target->set_fanmode(nonpacket_.src, nonnasa_fanspeed_to_fanmode(nonpacket_.command20.fanspeed));
                    // TODO
                    target->set_altmode(nonpacket_.src, 0);
                    // TODO
                    target->set_swing_horizontal(nonpacket_.src, false);
                    target->set_swing_vertical(nonpacket_.src, false);
+		   target->set_outdoor_cumulative_energy(nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
                 }
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
