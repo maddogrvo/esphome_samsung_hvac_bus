@@ -309,6 +309,20 @@ namespace esphome
             }
         }
 
+
+        uint8_t encode_request_swingmode(NonNasaSwingMode value)
+        {
+            switch (value)
+            {
+              	case NonNasaSwingMode::OFF:
+                	return 0x1F;
+            	case NonNasaSwingMode::Vertical:
+                	return 0x1A;
+            	default:
+                	return 0x1F; // Off
+            }
+        }
+
         std::vector<uint8_t> NonNasaRequest::encode()
         {
             std::vector<uint8_t> data{
@@ -331,7 +345,8 @@ namespace esphome
             // individual seems to deactivate the locale remotes with message "CENTRAL".
             // seems to be like a building management system.
             bool individual = false;
-
+	    
+	    data[4] = encode_request_swingmode(swing_mode)
             if (room_temp > 0)
                 data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
@@ -340,8 +355,7 @@ namespace esphome
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
             data[12] = build_checksum(data);
-
-            data[9] = (uint8_t)0x21;
+            data[10] = 0x0E;         // Open blade just short of max open
 
             return data;
         }
@@ -599,8 +613,29 @@ namespace esphome
                    // TODO
                    target->set_swing_horizontal(nonpacket_.src, false);
                    target->set_swing_vertical(nonpacket_.src, false);
-		   target->set_outdoor_cumulative_energy(nonpacket_.src, nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
                 }
+            }
+            else if (nonpacket_.cmd == NonNasaCommand::CmdC0:
+            {
+                // Add checks to ensure pending messages are not overwritten
+                if (!has_pending_control_message(nonpacket_.src))
+                {
+                    // Publish outdoor temperature if there are no pending control messages
+                    target->set_outdoor_temperature(nonpacket_.src, nonpacket_.commandC0.outdoor_unit_outdoor_temp_c);
+                }
+                break;
+            }
+            else if (nonpacket_.cmd == NonNasaCommand::CmdF3)
+            {
+                // Add checks to ensure pending messages are not overwritten
+                //if (!has_pending_control_message(nonpacket_.src))
+                //{
+                    // Publish power energy if there are no pending control messages
+                    target->set_outdoor_instantaneous_power(nonpacket_.src, nonpacket_.commandF3.inverter_power_w);
+                    target->set_outdoor_cumulative_energy(nonpacket_.src, nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
+                    target->set_outdoor_current(nonpacket_.src, nonpacket_.commandF3.inverter_current_a);
+                    target->set_outdoor_voltage(nonpacket_.src, nonpacket_.commandF3.inverter_voltage_v);
+                //}
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
             {
