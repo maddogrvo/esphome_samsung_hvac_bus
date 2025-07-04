@@ -316,7 +316,7 @@ namespace esphome
                 0xD0,                     // 01 src
                 (uint8_t)hex_to_int(dst), // 02 dst
                 0xB0,                     // 03 cmd
-                0x1F,                     // 04 ?
+                0x1F,                     // 04 = Data byte 01 Swing mode, 0x1a => Swing, 0x1f => no swing
                 0x04,                     // 05 ?
                 0,                        // 06 temp + fanmode
                 0,                        // 07 operation mode
@@ -332,7 +332,8 @@ namespace esphome
             // seems to be like a building management system.
             bool individual = false;
 
-            if (room_temp > 0)
+            data[4] = 0x1F;
+	    if (room_temp > 0)
                 data[5] = room_temp;
             data[6] = (target_temp & 31U) | encode_request_fanspeed(fanspeed);
             data[7] = (uint8_t)encode_request_mode(mode);
@@ -340,8 +341,6 @@ namespace esphome
             data[8] |= (individual ? 6U : 4U);
             data[9] = (uint8_t)0x21;
             data[12] = build_checksum(data);
-
-            data[9] = (uint8_t)0x21;
 
             return data;
         }
@@ -600,6 +599,18 @@ namespace esphome
                    target->set_swing_horizontal(nonpacket_.src, false);
                    target->set_swing_vertical(nonpacket_.src, false);
 		   target->set_outdoor_cumulative_energy(nonpacket_.src, nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
+                }
+            }
+	    else if (nonpacket_.cmd == NonNasaCommand::CmdF3)
+            {
+                // Add checks to ensure pending messages are not overwritten
+                if (!pending_control_message(nonpacket_.src))
+                {
+                    // Publish power energy if there are no pending control messages
+                    target->set_outdoor_instantaneous_power(nonpacket_.src, nonpacket_.commandF3.inverter_power_w);
+                    target->set_outdoor_cumulative_energy(nonpacket_.src, nonpacket_.commandF3.inverter_total_capacity_requirement_kw);
+                    target->set_outdoor_current(nonpacket_.src, nonpacket_.commandF3.inverter_current_a);
+                    target->set_outdoor_voltage(nonpacket_.src, nonpacket_.commandF3.inverter_voltage_v);
                 }
             }
             else if (nonpacket_.cmd == NonNasaCommand::CmdC6)
