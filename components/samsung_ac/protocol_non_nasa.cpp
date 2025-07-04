@@ -603,8 +603,17 @@ namespace esphome
             }
 	    else if (nonpacket_.cmd == NonNasaCommand::CmdF3)
             {
+                bool pending_control_message = false;
+                for (auto& item : nonnasa_requests)
+                {
+                   if (item.time_sent > 0 && nonpacket_.src == item.request.dst)
+                   {
+                      pending_control_message = true;
+                      break;
+                   }
+                }		
                 // Add checks to ensure pending messages are not overwritten
-                if (!pending_control_message(nonpacket_.src))
+                if (!pending_control_message)
                 {
                     // Publish power energy if there are no pending control messages
                     target->set_outdoor_instantaneous_power(nonpacket_.src, nonpacket_.commandF3.inverter_power_w);
